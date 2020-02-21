@@ -14,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ChatApp.Shared\ChatApp.Shared.csproj" />
+    <ProjectReference Include="..\..\..\..\nekoyume-unity\Lib9c\Lib9c.csproj" />
+    <ProjectReference Include="..\..\..\..\nekoyume-unity\shared\shared.csproj" />
   </ItemGroup>
 
   <!-- FOR SSL/TLS SUPPORT -->

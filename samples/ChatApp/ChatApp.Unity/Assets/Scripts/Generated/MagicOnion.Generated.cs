@@ -133,6 +133,8 @@ namespace ChatApp.Shared.Services {
         static readonly Func<RequestContext, ResponseContext> GenerateExceptionDelegate;
         static readonly Method<byte[], byte[]> SendReportAsyncMethod;
         static readonly Func<RequestContext, ResponseContext> SendReportAsyncDelegate;
+        static readonly Method<byte[], byte[]> GetStateRawMethod;
+        static readonly Func<RequestContext, ResponseContext> GetStateRawDelegate;
 
         static ChatServiceClient()
         {
@@ -140,6 +142,8 @@ namespace ChatApp.Shared.Services {
             GenerateExceptionDelegate = _GenerateException;
             SendReportAsyncMethod = new Method<byte[], byte[]>(MethodType.Unary, "IChatService", "SendReportAsync", MagicOnionMarshallers.ThroughMarshaller, MagicOnionMarshallers.ThroughMarshaller);
             SendReportAsyncDelegate = _SendReportAsync;
+            GetStateRawMethod = new Method<byte[], byte[]>(MethodType.Unary, "IChatService", "GetStateRaw", MagicOnionMarshallers.ThroughMarshaller, MagicOnionMarshallers.ThroughMarshaller);
+            GetStateRawDelegate = _GetStateRaw;
         }
 
         ChatServiceClient()
@@ -204,6 +208,15 @@ namespace ChatApp.Shared.Services {
         public global::MagicOnion.UnaryResult<global::MessagePack.Nil> SendReportAsync(string message)
         {
             return InvokeAsync<string, global::MessagePack.Nil>("IChatService/SendReportAsync", message, SendReportAsyncDelegate);
+        }
+        static ResponseContext _GetStateRaw(RequestContext __context)
+        {
+            return CreateResponseContext<byte[], byte[]>(__context, GetStateRawMethod);
+        }
+
+        public global::MagicOnion.UnaryResult<byte[]> GetStateRaw(byte[] addressBytes)
+        {
+            return InvokeAsync<byte[], byte[]>("IChatService/GetStateRaw", addressBytes, GetStateRawDelegate);
         }
     }
 }

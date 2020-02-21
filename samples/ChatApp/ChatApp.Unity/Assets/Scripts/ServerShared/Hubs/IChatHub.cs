@@ -1,6 +1,5 @@
-﻿using ChatApp.Shared.MessagePackObjects;
+using ChatApp.Shared.MessagePackObjects;
 using MagicOnion;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

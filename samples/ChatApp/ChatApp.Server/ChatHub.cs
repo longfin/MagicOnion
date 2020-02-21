@@ -1,9 +1,6 @@
-﻿using ChatApp.Shared.Hubs;
-using ChatApp.Shared.MessagePackObjects;
-using MagicOnion.Server.Hubs;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using MagicOnion.Server.Hubs;
+using Nekoyume.Shared.Hubs;
 
 namespace ChatApp.Server
 {
@@ -11,45 +8,31 @@ namespace ChatApp.Server
     /// Chat server processing.
     /// One class instance for one connection.
     /// </summary>
-    public class ChatHub : StreamingHubBase<IChatHub, IChatHubReceiver>, IChatHub
+    public class ChatHub : StreamingHubBase<IActionEvaluationHub, IActionEvaluationHubReceiver>, IActionEvaluationHub
     {
-        private IGroup room;
-        private string myName;
+        private IGroup group;
 
-        public async Task JoinAsync(JoinRequest request)
+        public async Task JoinAsync()
         {
-            this.room = await this.Group.AddAsync(request.RoomName);
-
-            this.myName = request.UserName;
-
-            this.Broadcast(this.room).OnJoin(request.UserName);
+            group = await Group.AddAsync(string.Empty);
         }
 
 
         public async Task LeaveAsync()
         {
-            await this.room.RemoveAsync(this.Context);
-
-            this.Broadcast(this.room).OnLeave(this.myName);
+            await group.RemoveAsync(Context);
         }
 
-        public async Task SendMessageAsync(string message)
-        {
-            var response = new MessageResponse { UserName = this.myName, Message = message };
-            this.Broadcast(this.room).OnSendMessage(response);
-
+        public async Task BroadcastAsync(byte[] outputStates)
+        {   
+            Broadcast(group).OnRender(outputStates);
             await Task.CompletedTask;
         }
 
-        public Task GenerateException(string message)
+        public async Task UpdateTipAsync(long index)
         {
-            throw new Exception(message);
-        }
-
-        // It is not called because it is a method as a sample of arguments.
-        public Task SampleMethod(List<int> sampleList, Dictionary<int, string> sampleDictionary)
-        {
-            throw new System.NotImplementedException();
+            Broadcast(group).OnTipChanged(index);
+            await Task.CompletedTask;
         }
 
         protected override ValueTask OnDisconnected()

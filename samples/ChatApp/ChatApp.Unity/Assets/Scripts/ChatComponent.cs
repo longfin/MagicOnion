@@ -3,10 +3,10 @@ using ChatApp.Shared.MessagePackObjects;
 using ChatApp.Shared.Services;
 using Grpc.Core;
 using MagicOnion.Client;
-using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using Bencodex;
 
 namespace Assets.Scripts
 {
@@ -215,8 +215,12 @@ namespace Assets.Scripts
 
         public async void UnaryGenerateException()
         {
-            // unary
-            await this.client.GenerateException("client exception(unary)！");
+            var returned = await this.client.GetStateRaw(new byte[] {
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03,
+            });
+            var decoded = new Codec().Decode(returned);
+            Debug.Log($"Returned: {decoded}");
         }
         #endregion
     }
